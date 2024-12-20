@@ -84,23 +84,9 @@ def add():
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     movie = Movie.query.get(id)
-    form = AddMovieForm(
-        title=movie.title,
-        year=movie.year,
-        description=movie.description,
-        rating=movie.rating,
-        ranking=movie.ranking,
-        review=movie.review,
-        img_url=movie.img_url,
-    )
-    if request.method == "POST":
-        movie.title = form.title.data
-        movie.year = form.year.data
-        movie.description = form.description.data
-        movie.rating = form.rating.data
-        movie.ranking = form.ranking.data
-        movie.review = form.review.data
-        movie.img_url = form.img_url.data
+    form = AddMovieForm(obj=movie)  # Populate form with movie data
+    if form.validate_on_submit():
+        form.populate_obj(movie)
         db.session.commit()
         flash("Movie updated successfully")
         return redirect(url_for("home"))
